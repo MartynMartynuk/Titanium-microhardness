@@ -1,27 +1,8 @@
 import numpy as np
 
-'''экстраполирует заданную по узлам функцию путем добавления узловых точек 
-    и поиска значений в них используя вычисления по полиному Лагранжа'''
-def extrapolation (knots, function, knots_dop):
-    #создает словарь для новых x со значениями lagr
-    func_dop = {}
-    for i in knots_dop:
-        func_dop[i] = lagrange(i, knots, function)
-
-    #добавляет точки в массив узлов и функций
-    for key in func_dop:
-        if key > knots[len(knots)-1]:
-            knots.append(key)
-            function.append(func_dop[key])
-        else:
-            for i in knots:
-                if key < i:
-                    knots.insert(knots.index(i), key)
-                    function.insert(knots.index(i)-1, func_dop[key])
-                    break
-    x_new = np.linspace(knots[0], knots[len(knots)-1], len(knots) * 20)
-    #применяет интерполяцию сплайнами к расширеной сетке узлов
-    return x_new, splyne_interpolation(knots, function, x_new)
+def linear_interpolate(x, x_knot, y_knot):
+    ans = y_knot[0] + (x - x_knot[0]) * (y_knot[1] - y_knot[0]) / (x_knot[1] - x_knot[0])
+    return ans
 
 def lagrange(x, x_list, y_list):
     lagr = 0
@@ -130,3 +111,47 @@ def progonka(matrix, vektor):
         reshen[i] = alpha[i] * reshen[i + 1] + beta[i]
     # Ответ (возвращает список)
     return reshen
+
+'''экстраполирует заданную по узлам функцию путем добавления узловых точек 
+    и поиска значений в них используя вычисления по полиному Лагранжа'''
+def extrapolation_with_lagr (knots, function, knots_dop):
+    #создает словарь для новых x со значениями lagr
+    func_dop = {}
+    for i in knots_dop:
+        func_dop[i] = lagrange(i, knots, function)
+
+    #добавляет точки в массив узлов и функций
+    for key in func_dop:
+        if key > knots[len(knots)-1]:
+            knots.append(key)
+            function.append(func_dop[key])
+        else:
+            for i in knots:
+                if key < i:
+                    knots.insert(knots.index(i), key)
+                    function.insert(knots.index(i)-1, func_dop[key])
+                    break
+    x_new = np.linspace(knots[0], knots[len(knots)-1], len(knots) * 20)
+    #применяет интерполяцию сплайнами к расширеной сетке узлов
+    return x_new, splyne_interpolation(knots, function, x_new)
+
+def extrapolation_with_linear (knots, function, knots_dop):
+    #создает словарь для новых x со значениями lagr
+    func_dop = {}
+    for i in knots_dop:
+        func_dop[i] = linear_interpolate(i, knots[-2:], function[:-2])
+
+    #добавляет точки в массив узлов и функций
+    for key in func_dop:
+        if key > knots[len(knots)-1]:
+            knots.append(key)
+            function.append(func_dop[key])
+        else:
+            for i in knots:
+                if key < i:
+                    knots.insert(knots.index(i), key)
+                    function.insert(knots.index(i)-1, func_dop[key])
+                    break
+    x_new = np.linspace(knots[0], knots[len(knots)-1], len(knots) * 20)
+    #применяет интерполяцию сплайнами к расширеной сетке узлов
+    return x_new, splyne_interpolation(knots, function, x_new)
