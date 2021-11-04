@@ -13,7 +13,7 @@ def lagrange(x, x_list, y_list):
         for j in range(0, n):
             if i != j:
                 chislit = chislit * (x - x_list[j])
-                znamen = znamen * (x_list[j] - x_list[i])
+                znamen = znamen * (x_list[i] - x_list[j])
         lagr = lagr + y_list[i] * chislit / znamen
     return lagr
 
@@ -119,27 +119,6 @@ def extrapolation_with_lagr (knots, function, knots_dop):
     func_dop = {}
     for i in knots_dop:
         func_dop[i] = lagrange(i, knots, function)
-
-    #добавляет точки в массив узлов и функций
-    for key in func_dop:
-        if key > knots[len(knots)-1]:
-            knots.append(key)
-            function.append(func_dop[key])
-        else:
-            for i in knots:
-                if key < i:
-                    knots.insert(knots.index(i), key)
-                    function.insert(knots.index(i)-1, func_dop[key])
-                    break
-    x_new = np.linspace(knots[0], knots[len(knots)-1], len(knots) * 20)
-    #применяет интерполяцию сплайнами к расширеной сетке узлов
-    return x_new, splyne_interpolation(knots, function, x_new)
-
-def extrapolation_with_linear (knots, function, knots_dop):
-    #создает словарь для новых x со значениями lagr
-    func_dop = {}
-    for i in knots_dop:
-        func_dop[i] = linear_interpolate(i, knots[-2:], function[:-2])
 
     #добавляет точки в массив узлов и функций
     for key in func_dop:
