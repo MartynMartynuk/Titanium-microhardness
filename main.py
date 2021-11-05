@@ -14,6 +14,10 @@ def find_max_temp(x, y):
 #finding nearest in massive
 def find_into(x, y, aim):
     print('Dodelat')
+    for mean in y:
+        if aim < mean:
+            break
+    return x[y.index(mean)], mean
 
 #значения эксперимента по вариации времени
 time_knots = [5, 10, 20, 30]
@@ -32,7 +36,7 @@ temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
 
 #aim_mean = float(input('Введите целевую микротвердость: '))
-aim_mean = 200
+aim_mean = 890
 
 current_mean = 0
 current_time = 0
@@ -72,18 +76,15 @@ elif aim_mean < time_mean[0]:
         #new_time_mean.insert(lagrange(current_time, time_knots, time_mean), 0)
     print('Такой возможности не предусмотрено, свяжитесь с разработчиком')'''
 else:
-    for mean in time_res:
-        if mean >= aim_mean:
-            x_mean = x_time[time_res.index(mean)]
-            break
+    answer, mean = find_into(x_time, time_res, aim_mean)
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
-          format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1)))
+          format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1)))
 
     plt.figure()
     plt.title('Time')
     plt.plot(x_time, time_res)
     plt.plot(new_time_knots, new_time_mean, 'x')
-    plt.plot(x_mean, mean, '*')
+    plt.plot(answer, mean, '*')
 
 '''
 plt.figure()
