@@ -19,6 +19,25 @@ def find_into(x, y, aim):
             break
     return x[y.index(mean)], mean
 
+#finding nearest to aim right
+def find_right(x_knots, y_mean, aim):
+    current_time = x_knots[len(x_knots) - 1]
+    current_mean = y_mean[len(y_mean) - 1]
+    new_time_knots = x_knots
+    new_time_mean = y_mean
+    while aim > current_mean:
+        current_time = current_time + 5
+        current_mean = lagrange(current_time, new_time_knots, new_time_mean)
+        new_time_knots.append(current_time)
+        new_time_mean.append(current_mean)
+    time_new = np.linspace(time_knots[0], time_knots[len(time_knots) - 1], len(new_time_knots) * 20)
+    func_new = splyne_interpolation(new_time_knots, new_time_mean, time_new)
+    for mean in func_new:
+        if mean > aim_mean:
+            answer = time_new[func_new.index(mean)]
+            break
+    return answer, time_new, func_new
+
 #значения эксперимента по вариации времени
 time_knots = [5, 10, 20, 30]
 time_mean = [859.78, 879.59, 888.29, 893.62]
@@ -40,23 +59,9 @@ aim_mean = 890
 
 current_mean = 0
 current_time = 0
-new_time_knots = time_knots
-new_time_mean = time_mean
 
 if aim_mean > time_mean[len(time_mean)-1]:
-    current_time = time_knots[len(time_knots)-1]
-    current_mean = time_mean[len(time_mean)-1]
-    while aim_mean > current_mean:
-        current_time = current_time + 5
-        current_mean = lagrange(current_time, new_time_knots, new_time_mean)
-        new_time_knots.append(current_time)
-        new_time_mean.append(current_mean)
-    x_new = np.linspace(time_knots[0], time_knots[len(time_knots)-1], len(new_time_knots) * 20)
-    func_new = splyne_interpolation(new_time_knots, new_time_mean, x_new)
-    for mean in func_new:
-        if mean > aim_mean:
-            x_mean = x_new[func_new.index(mean)]
-            break
+
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
           format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1)))
     plt.figure()
