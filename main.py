@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate
 
 #finding optimum temperature
-def find_temp(x, y):
+def find_max_temp(x, y):
     optimal_hard = 0
     for mean in y:
         if mean > optimal_hard:
@@ -11,6 +11,9 @@ def find_temp(x, y):
             optimal_temp = x[y.index(mean)]
     return optimal_temp
 
+#finding nearest in massive
+def find_into(x, y, aim):
+    print('Dodelat')
 
 #значения эксперимента по вариации времени
 time_knots = [5, 10, 20, 30]
@@ -51,7 +54,7 @@ if aim_mean > time_mean[len(time_mean)-1]:
             x_mean = x_new[func_new.index(mean)]
             break
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
-          format(round(find_temp(x_temp, temp_res), 1), round(x_mean, 1)))
+          format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1)))
     plt.figure()
     plt.title('Time')
     plt.plot(x_new, func_new)
@@ -74,7 +77,7 @@ else:
             x_mean = x_time[time_res.index(mean)]
             break
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
-          format(round(find_temp(x_temp, temp_res), 1), round(x_mean, 1)))
+          format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1)))
 
     plt.figure()
     plt.title('Time')
