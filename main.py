@@ -17,8 +17,8 @@ time_res = splyne_interpolation(time_knots, time_mean, x_time)
 temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
 
-aim_mean = float(input('Введите целевую микротвердость: '))
-#aim_mean = 1200
+#aim_mean = float(input('Введите целевую микротвердость: '))
+aim_mean = 1200
 
 #finding optimum temperature
 opt_hard = 0
@@ -57,6 +57,9 @@ if aim_mean > time_mean[len(time_mean)-1]:
 elif aim_mean < time_mean[0]:
     current_time = time_knots[0]
     current_mean = time_mean[0]
+    while aim_mean < current_mean and current_time > 0:
+        new_time_knots.insert(current_time, 0)
+        #new_time_mean.insert(lagrange(current_time, time_knots, time_mean), 0)
     print('Такой возможности не предусмотрено, свяжитесь с разработчиком')
 else:
     for mean in time_res:
@@ -71,10 +74,10 @@ else:
     plt.plot(new_time_knots, new_time_mean, 'x')
     plt.plot(x_mean, mean, '*')
 
-'''
+
 plt.figure()
 plt.title('Temperature')
 plt.plot(x_temp, temp_res)
 plt.plot(temp_knots, temp_mean, 'x')
-'''
+
 plt.show()
