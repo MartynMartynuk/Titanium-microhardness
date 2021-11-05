@@ -16,32 +16,60 @@ x_temp = np.linspace(temp_knots[0], temp_knots[len(temp_knots)-1], len(temp_knot
 time_res = splyne_interpolation(time_knots, time_mean, x_time)
 temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
-q = lagrange(35, time_knots, time_mean)
-p = scipy.interpolate.lagrange(time_knots, time_mean)
-print(p(35))
-print(q)
 
-
-
-'''
 aim_mean = float(input('Введите целевую микротвердость: '))
-aim_dev = [aim_mean - 0.1 * aim_mean, aim_mean + 0.1 * aim_mean]
-'''
+#aim_mean = 1200
+
+#finding optimum temperature
 opt_hard = 0
 for i in temp_res:
     if i > opt_hard:
         opt_hard = i
         opt_temp = x_temp[temp_res.index(i)]
-#print(opt_temp)
 
-time_point = linear_interpolate(35, time_knots[-2:], time_mean[-2:])
-time_dop = [35, 40, 45, 50]
-x_new, extra = extrapolation_with_lagr(time_knots, time_mean, time_dop)
 
-plt.figure()
-plt.title('Time')
-plt.plot(x_new, extra)
-plt.plot(time_knots, time_mean, 'x')
+current_mean = 0
+current_time = 0
+new_time_knots = time_knots
+new_time_mean = time_mean
+
+if aim_mean > time_mean[len(time_mean)-1]:
+    current_time = time_knots[len(time_knots)-1]
+    current_mean = time_mean[len(time_mean)-1]
+    while aim_mean > current_mean:
+        current_time = current_time + 5
+        current_mean = lagrange(current_time, new_time_knots, new_time_mean)
+        new_time_knots.append(current_time)
+        new_time_mean.append(current_mean)
+    x_new = np.linspace(time_knots[0], time_knots[len(time_knots)-1], len(new_time_knots) * 20)
+    func_new = splyne_interpolation(new_time_knots, new_time_mean, x_new)
+    for mean in func_new:
+        if mean > aim_mean:
+            x_mean = x_new[func_new.index(mean)]
+            break
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
+          format(round(opt_temp, 1), round(x_mean, 1)))
+    plt.figure()
+    plt.title('Time')
+    plt.plot(x_new, func_new)
+    plt.plot(new_time_knots, new_time_mean, 'x')
+    plt.plot(x_mean, mean, '*')
+elif aim_mean < time_mean[0]:
+    current_time = time_knots[0]
+    current_mean = time_mean[0]
+    print('Такой возможности не предусмотрено, свяжитесь с разработчиком')
+else:
+    for mean in time_res:
+        if mean >= aim_mean:
+            x_mean = x_time[time_res.index(mean)]
+            break
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
+          format(round(opt_temp, 1), round(x_mean, 1)))
+    plt.figure()
+    plt.title('Time')
+    plt.plot(x_time, time_res)
+    plt.plot(new_time_knots, new_time_mean, 'x')
+    plt.plot(x_mean, mean, '*')
 
 '''
 plt.figure()
