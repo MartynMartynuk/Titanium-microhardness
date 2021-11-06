@@ -75,8 +75,8 @@ depth_knots = [10, 30, 50, 70, 100, 130, 160, 200, 300, 400]
 depth_mean = [0.400, 0.974, 1.140, 1.112, 1.098, 1.079, 1.067, 1.055, 1.029, 1.011]
 
 try:
-    aim_mean = float(input('Введите целевую микротвердость: '))
     aim_depth = float(input('Введите целевую глубину: '))
+    aim_mean = float(input('Введите целевую микротвердость: '))
 except EOFError:
     print('EOF ERROR, please return input')
     input('Press any key')
@@ -91,7 +91,7 @@ except:
 #aim_depth = 68
 dep_coef = lagrange(aim_depth, depth_knots, depth_mean)
 
-aim_mean = aim_mean * dep_coef
+aim_mean = aim_mean / dep_coef
 
 if aim_mean > time_mean[len(time_mean)-1]:
     x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
