@@ -1,6 +1,5 @@
 from interpolation import *
 import matplotlib.pyplot as plt
-import scipy.interpolate
 
 #finding optimum temperature
 def find_max_temp(x, y):
