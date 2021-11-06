@@ -28,8 +28,9 @@ def find_right(x_knots, y_mean, aim):
         current_mean = lagrange(current_x, x_knots, y_mean)
         new_knots.append(current_x)
         new_mean.append(current_mean)
-    x_new = np.linspace(time_knots[0], time_knots[len(time_knots) - 1], len(new_knots) * 20)
+    x_new = np.linspace(new_knots[0], new_knots[len(new_knots) - 1], len(new_knots) * 20)
     y_new = splyne_interpolation(new_knots, new_mean, x_new)
+    answer = 0
     for mean in y_new:
         if mean > aim:
             answer = x_new[y_new.index(mean)]
@@ -96,7 +97,7 @@ except:
     print('Error, please return input')
     input('Press any key')
 '''
-aim_mean = 1000
+aim_mean = 1200
 
 '''
 dep_coef = lagrange(aim_depth, depth_knots, depth_mean)
@@ -106,8 +107,8 @@ aim_mean = aim_mean / dep_coef
 if aim_mean > time_mean[len(time_mean)-1]:
     x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
     harsh_answer = lagrange(x_mean, time_knots, harsh_time)
-    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
-          format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), ))
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
+          format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1)))
     plt.figure()
     plt.title('Time')
     plt.plot(x_new, func_new)
@@ -120,7 +121,7 @@ elif aim_mean < time_mean[0]:
         pass
     else:
         harsh_answer = lagrange(10, time_knots, harsh_time)
-    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная шероховатость ~ {2}'.
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
           format(round(x_mean, 1), 10, round(harsh_answer, 1)))
     plt.figure()
     plt.title('Temperature')
@@ -131,7 +132,7 @@ elif aim_mean < time_mean[0]:
 else:
     answer, mean = find_into(x_time, time_res, aim_mean)
     harsh_answer = lagrange(answer, time_knots, harsh_time)
-    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная шероховатость ~ {2}'.
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
           format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1), round(harsh_answer, 1)))
     plt.figure()
     plt.title('Time')
