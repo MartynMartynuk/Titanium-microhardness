@@ -70,8 +70,8 @@ x_temp = np.linspace(temp_knots[0], temp_knots[len(temp_knots)-1], len(temp_knot
 time_res = splyne_interpolation(time_knots, time_mean, x_time)
 temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
-#aim_mean = float(input('Введите целевую микротвердость: '))
-aim_mean = 801
+aim_mean = float(input('Введите целевую микротвердость: '))
+#aim_mean = 801
 
 if aim_mean > time_mean[len(time_mean)-1]:
     x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
