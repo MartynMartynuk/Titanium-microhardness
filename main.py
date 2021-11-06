@@ -13,7 +13,6 @@ def find_max_temp(x, y):
 
 #finding nearest in massive
 def find_into(x, y, aim):
-    print('Dodelat')
     for mean in y:
         if aim < mean:
             break
@@ -27,16 +26,35 @@ def find_right(x_knots, y_mean, aim):
     new_time_mean = y_mean
     while aim > current_mean:
         current_time = current_time + 5
-        current_mean = lagrange(current_time, new_time_knots, new_time_mean)
+        current_mean = lagrange(current_time, x_knots, y_mean)
         new_time_knots.append(current_time)
         new_time_mean.append(current_mean)
-    time_new = np.linspace(time_knots[0], time_knots[len(time_knots) - 1], len(new_time_knots) * 20)
-    func_new = splyne_interpolation(new_time_knots, new_time_mean, time_new)
-    for mean in func_new:
-        if mean > aim_mean:
-            answer = time_new[func_new.index(mean)]
+    x_new = np.linspace(time_knots[0], time_knots[len(time_knots) - 1], len(new_time_knots) * 20)
+    y_new = splyne_interpolation(new_time_knots, new_time_mean, x_new)
+    for mean in y_new:
+        if mean > aim:
+            answer = x_new[y_new.index(mean)]
             break
-    return answer, time_new, func_new
+    return answer, mean, x_new, y_new
+
+#finding nearest to aim left
+def find_left(x_knots, y_mean, aim):
+    current_x = x_knots[0]
+    current_mean = y_mean[0]
+    new_knots = x_knots
+    new_means = y_mean
+    while aim < current_mean:
+        current_x = current_x - 10
+        current_mean = lagrange(current_x, x_knots, y_mean)
+        new_knots.insert(0, current_x)
+        new_means.insert(0, current_mean)
+    x_new = np.linspace(new_knots[0], new_knots[len(new_knots) - 1], len(new_knots) * 20)
+    y_new = splyne_interpolation(new_knots, new_means, x_new)
+    for mean in y_new:
+        if mean > aim:
+            answer = x_new[y_new.index(mean)]
+            break
+    return answer, mean, x_new, y_new
 
 #значения эксперимента по вариации времени
 time_knots = [5, 10, 20, 30]
@@ -53,42 +71,36 @@ x_temp = np.linspace(temp_knots[0], temp_knots[len(temp_knots)-1], len(temp_knot
 time_res = splyne_interpolation(time_knots, time_mean, x_time)
 temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
-
 #aim_mean = float(input('Введите целевую микротвердость: '))
-aim_mean = 890
-
-current_mean = 0
-current_time = 0
+aim_mean = 801
 
 if aim_mean > time_mean[len(time_mean)-1]:
-
+    x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
           format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1)))
     plt.figure()
     plt.title('Time')
     plt.plot(x_new, func_new)
-    plt.plot(new_time_knots, new_time_mean, 'x')
+    #plt.plot(new_time_knots, new_time_mean, 'x')
     plt.plot(x_mean, mean, '*')
 elif aim_mean < time_mean[0]:
-    for i in temp_res:
-
-     '''   
-    current_time = time_knots[0]
-    current_mean = time_mean[0]
-    while aim_mean < current_mean and current_time > 0:
-        new_time_knots.insert(current_time, 0)
-        print(new_time_knots)
-        #new_time_mean.insert(lagrange(current_time, time_knots, time_mean), 0)
-    print('Такой возможности не предусмотрено, свяжитесь с разработчиком')'''
+    x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
+    print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
+          format(round(x_mean, 1), 10))
+    plt.figure()
+    plt.title('Temperature')
+    plt.plot(x_new, func_new)
+    plt.plot(temp_knots, temp_mean, 'x')
+    plt.plot(x_mean, mean, '*')
+    plt.show()
 else:
     answer, mean = find_into(x_time, time_res, aim_mean)
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут'.
           format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1)))
-
     plt.figure()
     plt.title('Time')
     plt.plot(x_time, time_res)
-    plt.plot(new_time_knots, new_time_mean, 'x')
+    #plt.plot(new_time_knots, new_time_mean, 'x')
     plt.plot(answer, mean, '*')
 
 '''
