@@ -80,12 +80,10 @@ depth_mean = [0.400, 0.974, 1.140, 1.112, 1.098, 1.079, 1.067, 1.055, 1.029, 1.0
 #значения шероховатости по температуре
 harsh_temp = [2.167, 2.036, 2.694, 0.830]
 x_harsh_temp = [650, 700, 800, 850]
-#harsh_temp_mean = splyne_interpolation(temp_knots, harsh_temp, x_temp)
 
 #значения шероховатости по времени
 harsh_time = [0.714, 2.400, 2.411, 3.201]
-#harsh_time_mean = splyne_interpolation(time_knots, harsh_time, x_time)
-'''
+
 try:
     aim_depth = float(input('Введите глубину измерения: '))
     assert aim_depth >= 10 and aim_depth <= 400, print('Глубина измерения должна быть от 10 до 400 мкм')
@@ -100,18 +98,16 @@ except KeyboardInterrupt:
 except:
     print('Error, please return input')
     input('Press any key')
-'''
 
-aim_mean = 999
+#aim_mean = 1200
 
-'''
 dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
 aim_mean = aim_mean / dep_coef
-'''
 
 if aim_mean > time_mean[len(time_mean)-1]:
     x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
-    harsh_answer = lagrange(x_mean, time_knots, harsh_time)
+    #harsh_answer = lagrange(x_mean, time_knots, harsh_time)
+    harsh_answer = linear_interpolate(x_mean, time_knots[-2:], harsh_time[-2:])
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
           format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1)))
     plt.figure()
@@ -140,18 +136,6 @@ else:
     plt.figure()
     plt.title('Time')
     plt.plot(x_time, time_res)
-    #plt.plot(new_time_knots, new_time_mean, 'x')
+    plt.plot(time_knots, time_mean, 'x')
     plt.plot(answer, mean, '*')
-
-'''
-harsh_answer = lagrange(x_time, temp_knots, harsh_temp)
-print('!', harsh_answer)
-'''
-'''
-plt.figure()
-plt.title('Temperature')
-plt.plot(x_temp, temp_res)
-plt.plot(temp_knots, temp_mean, 'x')
-
-plt.show()
-'''
+    plt.show()
