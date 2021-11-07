@@ -1,5 +1,6 @@
 from interpolation import *
 import matplotlib.pyplot as plt
+import scipy.interpolate
 
 #finding optimum temperature
 def find_max_temp(x, y):
@@ -85,25 +86,29 @@ harsh_time = [0.714, 2.400, 2.411, 3.201]
 #harsh_time_mean = splyne_interpolation(time_knots, harsh_time, x_time)
 '''
 try:
+    aim_depth = float(input('Введите глубину измерения: '))
+    assert aim_depth >= 10 and aim_depth <= 400
     aim_mean = float(input('Введите целевую микротвердость: '))
-    aim_depth = float(input('Введите целевую глубину: '))
 except EOFError:
     print('EOF ERROR, please return input')
     input('Press any key')
 except KeyboardInterrupt:
     print('Операция прервана пользователем')
     input('Press any key')
+except AssertionError:
+    print('Вы ввели глубину измерения не из диапазона 10 ... 400')
 except:
     print('Error, please return input')
     input('Press any key')
 '''
+
 aim_mean = 1200
 
 '''
-dep_coef = lagrange(aim_depth, depth_knots, depth_mean)
-
+dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
 aim_mean = aim_mean / dep_coef
 '''
+
 if aim_mean > time_mean[len(time_mean)-1]:
     x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
     harsh_answer = lagrange(x_mean, time_knots, harsh_time)
@@ -112,8 +117,9 @@ if aim_mean > time_mean[len(time_mean)-1]:
     plt.figure()
     plt.title('Time')
     plt.plot(x_new, func_new)
-    #plt.plot(new_time_knots, new_time_mean, 'x')
+    plt.plot(time_knots, time_mean, 'x')
     plt.plot(x_mean, mean, '*')
+    plt.show()
 elif aim_mean < time_mean[0]:
     x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
     harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
@@ -139,6 +145,7 @@ else:
     plt.plot(x_time, time_res)
     #plt.plot(new_time_knots, new_time_mean, 'x')
     plt.plot(answer, mean, '*')
+
 '''
 harsh_answer = lagrange(x_time, temp_knots, harsh_temp)
 print('!', harsh_answer)
