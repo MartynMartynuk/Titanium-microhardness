@@ -17,7 +17,7 @@ def lagrange(x, x_list, y_list):
         lagr = lagr + y_list[i] * chislit / znamen
     return lagr
 
-'''выполняет интерполяцию методом кубического сплайна'''
+'''выполняет интерполяцию методом кубического сплайна. применяется к списку Х'''
 def splyne_interpolation(knots, function, x):
     n = len(function)
     # вычисляем шаг h
@@ -134,3 +134,62 @@ def extrapolation_with_lagr (knots, function, knots_dop):
     x_new = np.linspace(knots[0], knots[len(knots)-1], len(knots) * 20)
     #применяет интерполяцию сплайнами к расширеной сетке узлов
     return x_new, splyne_interpolation(knots, function, x_new)
+
+
+'''выполняет интерполяцию методом кубического сплайна. применяется к списку Х'''
+def splyne_function(knots, function, x):
+    n = len(function)
+    # вычисляем шаг h
+    shag = [None]
+    shag = shag * (n - 1)
+    for i in range(0, n - 1):
+        shag[i] = knots[i + 1] - knots[i]
+
+    # заполняем матрицу СЛАУ
+    matrix = np.zeros((n, n), dtype=float)
+    matrix[0, 0] = 1
+    matrix[n - 1, n - 1] = 1
+    j = 0
+    for i in range(1, n):
+        matrix[i, j] = shag[i - 1]
+        matrix[i, j + 1] = 2 * (shag[i - 1] + shag[i])
+        matrix[i, j + 2] = shag[i]
+        j += 1
+        if (j + 2) >= n:
+            break
+
+    vektor = [None]
+    vektor = vektor * n
+    vektor[0] = 0  # зануляю в силу того что написано в местной методичке
+    vektor[n - 1] = 0  # вообще может быть и не равно 0
+    for i in range(1, n - 1):
+        # т.к шаги нумеруются с 0, индекс шагов пишу на 1 меньше положенного
+        chast1 = (function[i + 1] - function[i]) / shag[i]
+        chast2 = (function[i] - function[i - 1]) / shag[i - 1]
+        vektor[i] = 3 * (chast1 - chast2)  # или 6 * ...
+
+    coef_c = progonka(matrix, vektor)
+
+    # вычисляем коэффициент d
+    coef_d = [None]
+    coef_d = coef_d * (n - 1)
+    for i in range(0, n - 1):
+        coef_d[i] = (coef_c[i + 1] - coef_c[i]) / (3*shag[i])  # или 1*shag
+
+    # вычисляем коэффициент b
+    coef_b = [None]
+    coef_b = coef_b * (n - 1)
+    for i in range(0, n - 1):
+        slag1 = (function[i + 1] - function[i]) / shag[i]
+        slag2 = shag[i]/3 * (2 * coef_c[i] + coef_c[i+1])
+        coef_b[i] = slag1 - slag2
+
+    for i in range(n - 1, -1, -1):
+        if x > knots[i]:
+            break
+    slag_a = function[i]
+    slag_b = coef_b[i] * (x - knots[i])
+    slag_c = coef_c[i] * (x - knots[i]) ** 2
+    slag_d = coef_d[i] * (x - knots[i]) ** 3
+    splyne_function = (slag_a + slag_b + slag_c + slag_d)
+    return splyne_function
