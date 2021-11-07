@@ -115,6 +115,7 @@ if aim_mean > time_mean[len(time_mean)-1]:
     plt.plot(time_knots, time_mean, 'x')
     plt.plot(x_mean, mean, '*')
     plt.show()
+    input('Press any key to continue')
 elif aim_mean < time_mean[0]:
     x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
     #harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
@@ -127,6 +128,7 @@ elif aim_mean < time_mean[0]:
     plt.plot(temp_knots, temp_mean, 'x')
     plt.plot(x_mean, mean, '*')
     plt.show()
+    input('Press any key to continue')
 else:
     answer, mean = find_into(x_time, time_res, aim_mean)
     harsh_answer = lagrange(answer, time_knots, harsh_time)
@@ -138,3 +140,4 @@ else:
     plt.plot(time_knots, time_mean, 'x')
     plt.plot(answer, mean, '*')
     plt.show()
+    input('Press any key to continue')
