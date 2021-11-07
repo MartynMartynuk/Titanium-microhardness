@@ -46,7 +46,8 @@ def find_left(x_knots, y_mean, aim):
     new_means = y_mean.copy()
     while aim < current_mean:
         current_x = current_x - 10
-        current_mean = lagrange(current_x, x_knots, y_mean)
+        #current_mean = lagrange(current_x, new_knots, new_means)
+        current_mean = linear_interpolate(current_x, x_knots, y_mean)
         new_knots.insert(0, current_x)
         new_means.insert(0, current_mean)
     x_new = np.linspace(new_knots[0], new_knots[len(new_knots) - 1], len(new_knots) * 20)
@@ -87,22 +88,21 @@ harsh_time = [0.714, 2.400, 2.411, 3.201]
 '''
 try:
     aim_depth = float(input('Введите глубину измерения: '))
-    assert aim_depth >= 10 and aim_depth <= 400
+    assert aim_depth >= 10 and aim_depth <= 400, print('Глубина измерения должна быть от 10 до 400 мкм')
     aim_mean = float(input('Введите целевую микротвердость: '))
+    assert aim_mean >=450, print('Целевая микротвердость должна быть больше 450')
 except EOFError:
     print('EOF ERROR, please return input')
     input('Press any key')
 except KeyboardInterrupt:
     print('Операция прервана пользователем')
     input('Press any key')
-except AssertionError:
-    print('Вы ввели глубину измерения не из диапазона 10 ... 400')
 except:
     print('Error, please return input')
     input('Press any key')
 '''
 
-aim_mean = 1200
+aim_mean = 999
 
 '''
 dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
@@ -122,11 +122,8 @@ if aim_mean > time_mean[len(time_mean)-1]:
     plt.show()
 elif aim_mean < time_mean[0]:
     x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
-    harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
-    if harsh_answer > 0:
-        pass
-    else:
-        harsh_answer = lagrange(10, time_knots, harsh_time)
+    #harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
+    harsh_answer = linear_interpolate(x_mean, temp_knots, harsh_temp)
     print('Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
           format(round(x_mean, 1), 10, round(harsh_answer, 1)))
     plt.figure()
