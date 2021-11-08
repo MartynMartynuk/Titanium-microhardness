@@ -1,6 +1,6 @@
 from interpolation import *
 import matplotlib.pyplot as plt
-import scipy.interpolate
+from gui import *
 
 #finding optimum temperature
 def find_max_temp(x, y):
@@ -84,6 +84,25 @@ x_harsh_temp = [650, 700, 800, 850]
 #значения шероховатости по времени
 harsh_time = [0.714, 2.400, 2.411, 3.201]
 
+def asd(x, y):
+    z = x+y
+    print('z=', z)
+
+class NewGui(MyGui):
+    def __init__(self):
+        MyGui.__init__(self)
+
+    def push(self):
+        asd(self.entry_depth.get(),  self.entry_hv.get())
+
+
+
+
+window = NewGui()
+window.pack()
+window.mainloop()
+
+'''
 try:
     aim_depth = float(input('Введите глубину измерения: '))
     assert aim_depth >= 10 and aim_depth <= 400, print('Глубина измерения должна быть от 10 до 400 мкм')
@@ -139,3 +158,4 @@ else:
     plt.plot(time_knots, time_mean, 'x')
     plt.plot(answer, mean, '*')
     plt.show()
+    '''
