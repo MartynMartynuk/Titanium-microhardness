@@ -31,9 +31,9 @@ harsh_time = [0.714, 2.400, 2.411, 3.201]
 class NewGui(MyGui):
     def __init__(self):
         MyGui.__init__(self)
+        self.i = 0
 
     def push(self):
-        i=0
         try:
             self.depth_in = float(self.entry_depth.get())
             #print('depth = ', self.depth_in)
@@ -47,9 +47,9 @@ class NewGui(MyGui):
             showerror(title='Get HV parameters', message='Ошибка "конец ввода"!\n . Повторите ввод')
         except:
             showerror(title='Get HV parameters', message='Ошибка!\n Пожалуйста повторите ввод')
-        i += 1
+        self.i += 1
         answer = calculation(self.hv_in, self.depth_in)
-        self.output_field.insert(END, '\n {0}) {1}; \n'.format(str(i), answer))
+        self.output_field.insert(END, '\n {0}) {1}; \n'.format(str(self.i), answer))
 
 
 def calculation(aim_mean, aim_depth):
