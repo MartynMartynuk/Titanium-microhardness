@@ -84,18 +84,67 @@ x_harsh_temp = [650, 700, 800, 850]
 #значения шероховатости по времени
 harsh_time = [0.714, 2.400, 2.411, 3.201]
 
-def asd(x, y):
-    z = x+y
-    print('z=', z)
-
 class NewGui(MyGui):
     def __init__(self):
         MyGui.__init__(self)
 
     def push(self):
-        asd(self.entry_depth.get(),  self.entry_hv.get())
+        try:
+            self.depth_in = float(self.entry_hv.get())
+            assert self.depth_in >= 10 and self.depth_in <= 400, \
+                showinfo(message='Ошибка!\n Глубина измерения должна быть от 10 до 400 мкм')
+            print('depth = ', self.depth_in)
+            self.hv_in = float(self.entry_hv.get())
+            assert self.hv_in >= 450, \
+                showinfo(message='Ошибка!\n Целевая микротвердость должна быть больше 450')
+            print('hv = ', self.hv_in)
 
+        except:
+            showinfo(message='Ошибка!\n Пожалуйста повторите ввод')
+        calculation(self.hv_in, self.depth_in)
 
+def calculation(aim_mean, aim_depth):
+    dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
+    aim_mean = aim_mean / dep_coef
+
+    if aim_mean > time_mean[len(time_mean) - 1]:
+        x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
+        # harsh_answer = lagrange(x_mean, time_knots, harsh_time)
+        harsh_answer = linear_interpolate(x_mean, time_knots[-2:], harsh_time[-2:])
+        print(
+            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
+            format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1)))
+        plt.figure()
+        plt.title('Time')
+        plt.plot(x_new, func_new)
+        plt.plot(time_knots, time_mean, 'x')
+        plt.plot(x_mean, mean, '*')
+        plt.show()
+    elif aim_mean < time_mean[0]:
+        x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
+        # harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
+        harsh_answer = linear_interpolate(x_mean, temp_knots, harsh_temp)
+        print(
+            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
+            format(round(x_mean, 1), 10, round(harsh_answer, 1)))
+        plt.figure()
+        plt.title('Temperature')
+        plt.plot(x_new, func_new)
+        plt.plot(temp_knots, temp_mean, 'x')
+        plt.plot(x_mean, mean, '*')
+        plt.show()
+    else:
+        answer, mean = find_into(x_time, time_res, aim_mean)
+        harsh_answer = lagrange(answer, time_knots, harsh_time)
+        print(
+            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
+            format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1), round(harsh_answer, 1)))
+        plt.figure()
+        plt.title('Time')
+        plt.plot(x_time, time_res)
+        plt.plot(time_knots, time_mean, 'x')
+        plt.plot(answer, mean, '*')
+        plt.show()
 
 
 window = NewGui()
