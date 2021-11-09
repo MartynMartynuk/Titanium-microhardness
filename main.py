@@ -33,20 +33,24 @@ class NewGui(MyGui):
         MyGui.__init__(self)
 
     def push(self):
+        i=0
         try:
             self.depth_in = float(self.entry_depth.get())
-            print('depth = ', self.depth_in)
+            #print('depth = ', self.depth_in)
             assert self.depth_in >= 10 and self.depth_in <= 400, \
                 showerror(title='Get HV parameters', message='Ошибка!\n Глубина измерения должна быть от 10 до 400 мкм')
             self.hv_in = float(self.entry_hv.get())
-            print('hv = ', self.hv_in)
+            #print('hv = ', self.hv_in)
             assert self.hv_in >= 450, \
                 showerror(title='Get HV parameters', message='Ошибка!\n Целевая микротвердость должна быть больше 450')
         except EOFError:
             showerror(title='Get HV parameters', message='Ошибка "конец ввода"!\n . Повторите ввод')
         except:
             showerror(title='Get HV parameters', message='Ошибка!\n Пожалуйста повторите ввод')
-        calculation(self.hv_in, self.depth_in)
+        i += 1
+        answer = calculation(self.hv_in, self.depth_in)
+        self.output_field.insert(END, '\n {0}) {1}; \n'.format(str(i), answer))
+
 
 def calculation(aim_mean, aim_depth):
     dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
@@ -56,40 +60,42 @@ def calculation(aim_mean, aim_depth):
         x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
         # harsh_answer = lagrange(x_mean, time_knots, harsh_time)
         harsh_answer = linear_interpolate(x_mean, time_knots[-2:], harsh_time[-2:])
-        print(
-            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
-            format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1)))
+        output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
+            .format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1))
+        #print(output)
+        '''
         plt.figure()
         plt.title('Time')
         plt.plot(x_new, func_new)
         plt.plot(time_knots, time_mean, 'x')
         plt.plot(x_mean, mean, '*')
-        plt.show()
+        plt.show()'''
     elif aim_mean < time_mean[0]:
         x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
         # harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
         harsh_answer = linear_interpolate(x_mean, temp_knots, harsh_temp)
-        print(
-            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
-            format(round(x_mean, 1), 10, round(harsh_answer, 1)))
-        plt.figure()
+        output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
+            .format(round(x_mean, 1), 10, round(harsh_answer, 1))
+        #print(output)
+        '''plt.figure()
         plt.title('Temperature')
         plt.plot(x_new, func_new)
         plt.plot(temp_knots, temp_mean, 'x')
         plt.plot(x_mean, mean, '*')
-        plt.show()
+        plt.show()'''
     else:
         answer, mean = find_into(x_time, time_res, aim_mean)
         harsh_answer = lagrange(answer, time_knots, harsh_time)
-        print(
-            'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'.
-            format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1), round(harsh_answer, 1)))
-        plt.figure()
+        output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
+            .format(round(find_max_temp(x_temp, temp_res), 1), round(answer, 1), round(harsh_answer, 1))
+        #print(output)
+        '''plt.figure()
         plt.title('Time')
         plt.plot(x_time, time_res)
         plt.plot(time_knots, time_mean, 'x')
         plt.plot(answer, mean, '*')
-        plt.show()
+        plt.show()'''
+    return output
 
 
 window = NewGui()
