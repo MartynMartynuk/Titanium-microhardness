@@ -90,14 +90,15 @@ class NewGui(MyGui):
 
     def push(self):
         try:
-            self.depth_in = float(self.entry_hv.get())
+            self.depth_in = float(self.entry_depth.get())
+            print('depth = ', self.depth_in)
             assert self.depth_in >= 10 and self.depth_in <= 400, \
                 showinfo(message='Ошибка!\n Глубина измерения должна быть от 10 до 400 мкм')
-            print('depth = ', self.depth_in)
             self.hv_in = float(self.entry_hv.get())
+            print('hv = ', self.hv_in)
             assert self.hv_in >= 450, \
                 showinfo(message='Ошибка!\n Целевая микротвердость должна быть больше 450')
-            print('hv = ', self.hv_in)
+
 
         except:
             showinfo(message='Ошибка!\n Пожалуйста повторите ввод')
