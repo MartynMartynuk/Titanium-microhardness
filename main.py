@@ -30,7 +30,7 @@ harsh_time = [0.714, 2.400, 2.411, 3.201]
 
 class NewGui(MyGui):
     def __init__(self):
-        MyGui.__init__(self)
+        super().__init__()
         self.i = 0
 
     def push(self):
@@ -63,8 +63,7 @@ def calculation(aim_mean, aim_depth):
         output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
             .format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1))
         #print(output)
-        '''
-        plt.figure()
+        '''plt.figure()
         plt.title('Time')
         plt.plot(x_new, func_new)
         plt.plot(time_knots, time_mean, 'x')
