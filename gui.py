@@ -1,9 +1,13 @@
 from tkinter import *
 from tkinter.messagebox import *
 
-class MyGui(Frame):
-    def __init__(self, parent=None):
-        Frame.__init__(self, parent)
+class MyGui(Tk):
+    def __init__(self):
+        Tk.__init__(self)
+        label_ttl = Label(self, text='Оптимизация катодного электролитно-плазменного азотирования'
+                                     'титановых сплавов\n для управления микротвердостью '
+                                     'поверхностного слоя математическими методами')
+        label_ttl.pack()
         frame_left = Frame(self)
         frame_left.pack(fill=Y, side=LEFT)
         self.label_depth = Label(frame_left, text='Введите глубину измерения, мкм', heigh=2, width=50)

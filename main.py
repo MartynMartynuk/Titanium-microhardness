@@ -116,6 +116,6 @@ def calculation(aim_mean, aim_depth):
     return output, xPlot, yPlot, xKnots, yKnots, xAns, yAns, title
 
 window = NewGui()
-window.pack()
+window.title('')
 window.mainloop()
 plt.close()
