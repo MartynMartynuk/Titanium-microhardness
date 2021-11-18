@@ -16,14 +16,19 @@ class MyGui(Frame):
         self.entry_hv.pack()
         label1 = Label(frame_left)    #костыль, выполняет функцию пробела между строкой ввода и кнопкой
         label1.pack()
-        self.button = Button(frame_left, text='Calculate', command=self.push)
+        self.button = Button(frame_left, text='Рассчитать', width=35, command=self.push)
         self.button.pack()
+        label2 = Label(frame_left, heigh='1')
+        label2.pack()
+        self.button_graph = Button(frame_left, text='Показать график', width=35, command=self.graph)
+        self.button_graph.pack()
         frame_right = Frame(self)
         frame_right.pack(fill=Y, side=RIGHT)
         self.output_field = Text(frame_right, heigh=15, width=60)
         self.output_field.pack()
 
-
     def push(self):
-        #showinfo(message='Zaebis')
+        pass
+
+    def graph(self):
         pass
