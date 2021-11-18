@@ -61,8 +61,8 @@ class NewGui(MyGui):
         self.output_field.insert(END, '\n {0}) {1}; \n'.format(str(self.i), answer))
 
     def graph(self):
-        if self.xans == 100500:
-            showerror(title='Микротвердость титана', message='Ошибка!\n Сначала выполните расчет')
+        if self.xans == 100500 and self.yans == 100500:
+            showerror(title='Микротвердость титана', message='Ошибка!\n Сначала выполните раcсчет')
         else:
             plt.figure()
             plt.title(self.tittle)
