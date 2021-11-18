@@ -4,11 +4,11 @@ from functions import *
 
 #значения эксперимента по вариации времени
 time_knots = [5, 10, 20, 30]
-time_mean = [859.78, 879.59, 888.29, 893.62]
+time_mean = [553.08, 622.09, 470.43, 478.23]
 
 #значения эксперимента по вариации температур
-temp_knots = [650, 700, 800, 850]
-temp_mean = [870.09, 904.98, 898.04, 835.41]
+temp_knots = [600, 700, 800, 850]
+temp_mean = [439.73, 474.82, 468.49, 500.19]
 
 #разбиение имеющихся координат по х
 x_time = np.linspace(time_knots[0], time_knots[len(time_knots)-1], len(time_knots) * 20)
@@ -18,12 +18,13 @@ time_res = splyne_interpolation(time_knots, time_mean, x_time)
 temp_res = splyne_interpolation(temp_knots, temp_mean, x_temp)
 
 #значения микротвердости по глубине измерения
-depth_knots = [10, 30, 50, 70, 100, 130, 160, 200, 300, 400]
-depth_mean = [0.400, 0.974, 1.140, 1.112, 1.098, 1.079, 1.067, 1.055, 1.029, 1.011]
+depth_knots = [10, 30, 50, 70, 100, 130, 160, 200, 300, 400, 500, 600, 700, 800]
+depth_mean = [1.302,	1.12,	1.088,	1.038,	1.019,	0.998,	0.975,	0.951,
+              0.923,	0.875,	0.818,	0.802,	0.799,	0.771]
 
 #значения шероховатости по температуре
-harsh_temp = [2.167, 2.036, 2.694, 0.830]
-x_harsh_temp = [650, 700, 800, 850]
+harsh_temp = [2.549, 3.086, 2.368, 2.609]
+x_harsh_temp = [600, 700, 800, 850]
 
 #значения шероховатости по времени
 harsh_time = [0.714, 2.400, 2.411, 3.201]
@@ -44,7 +45,7 @@ class NewGui(MyGui):
         try:
             self.depth_in = float(self.entry_depth.get())
             #print('depth = ', self.depth_in)
-            assert self.depth_in >= 10 and self.depth_in <= 400, \
+            assert self.depth_in >= 10 and self.depth_in <= 800, \
                 showerror(title='Микротвердость титана', message='Ошибка!\n Глубина измерения должна быть от 10 до 400 мкм')
             self.hv_in = float(self.entry_hv.get())
             #print('hv = ', self.hv_in)
@@ -73,7 +74,7 @@ class NewGui(MyGui):
 
 def calculation(aim_mean, aim_depth):
     dep_coef = splyne_function(depth_knots, depth_mean, aim_depth)
-    aim_mean = aim_mean / dep_coef
+    aim_mean = aim_mean * dep_coef
     if aim_mean > time_mean[len(time_mean) - 1]:
         x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
         # harsh_answer = lagrange(x_mean, time_knots, harsh_time)
