@@ -44,11 +44,9 @@ class NewGui(MyGui):
     def push(self):
         try:
             self.depth_in = float(self.entry_depth.get())
-            #print('depth = ', self.depth_in)
             assert self.depth_in >= 10 and self.depth_in <= 800, \
                 showerror(title='Микротвердость титана', message='Ошибка!\n Глубина измерения должна быть от 10 до 400 мкм')
             self.hv_in = float(self.entry_hv.get())
-            #print('hv = ', self.hv_in)
             assert self.hv_in >= 450, \
                 showerror(title='Микротвердость титана', message='Ошибка!\n Целевая микротвердость должна быть больше 450')
         except EOFError:
@@ -77,7 +75,6 @@ def calculation(aim_mean, aim_depth):
     aim_mean = aim_mean * dep_coef
     if aim_mean > time_mean[len(time_mean) - 1]:
         x_mean, mean, x_new, func_new = find_right(time_knots, time_mean, aim_mean)
-        # harsh_answer = lagrange(x_mean, time_knots, harsh_time)
         harsh_answer = linear_interpolate(x_mean, time_knots[-2:], harsh_time[-2:])
         output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
             .format(round(find_max_temp(x_temp, temp_res), 1), round(x_mean, 1), round(harsh_answer, 1))
@@ -90,7 +87,6 @@ def calculation(aim_mean, aim_depth):
         title = 'Время'
     elif aim_mean < time_mean[0]:
         x_mean, mean, x_new, func_new = find_left(temp_knots, temp_mean, aim_mean)
-        # harsh_answer = lagrange(x_mean, temp_knots, harsh_time)
         harsh_answer = linear_interpolate(x_mean, temp_knots, harsh_temp)
         output = 'Требуемая температура {0}С, требуемое время эксперимента: {1} минут. Прогнозная средняя шероховатость ~ {2}'\
             .format(round(x_mean, 1), 10, round(harsh_answer, 1))
